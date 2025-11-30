@@ -12,11 +12,71 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        // Create sample users
+        $users = [
+            [
+                'name' => 'John Doe',
+                'email' => 'john@example.com',
+                'password' => bcrypt('password'),
+            ],
+            [
+                'name' => 'Jane Smith',
+                'email' => 'jane@example.com',
+                'password' => bcrypt('password'),
+            ],
+            [
+                'name' => 'Bob Johnson',
+                'email' => 'bob@example.com',
+                'password' => bcrypt('password'),
+            ],
+        ];
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        foreach ($users as $user) {
+            \App\Models\User::create($user);
+        }
+
+        // Create sample customers
+        $customers = [
+            [
+                'name' => 'Alice Cooper',
+                'email' => 'alice@customer.com',
+                'phone' => '+1234567890',
+            ],
+            [
+                'name' => 'Charlie Brown',
+                'email' => 'charlie@customer.com',
+                'phone' => '+0987654321',
+            ],
+        ];
+
+        foreach ($customers as $customer) {
+            \App\Models\Customer::create($customer);
+        }
+
+        // Create sample tasks
+        $tasks = [
+            [
+                'title' => 'Complete project proposal',
+                'description' => 'Write and submit the Q4 project proposal',
+                'status' => 'pending',
+                'user_id' => 1,
+            ],
+            [
+                'title' => 'Review code changes',
+                'description' => 'Review pull request #123',
+                'status' => 'in_progress',
+                'user_id' => 2,
+            ],
+            [
+                'title' => 'Update documentation',
+                'description' => 'Update API documentation for v2.0',
+                'status' => 'completed',
+                'user_id' => 1,
+            ],
+        ];
+
+        foreach ($tasks as $task) {
+            \App\Models\Task::create($task);
+        }
     }
 }

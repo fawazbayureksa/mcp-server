@@ -62,7 +62,7 @@ class MCPService
 
     public function executeTool(string $toolName, array $args, Request $request)
     {
-        $method = 'handle' . ucfirst($toolName);
+        $method = 'handle' . str_replace('_', '', ucwords($toolName, '_'));
 
         if (!method_exists($this, $method)) {
             throw new \InvalidArgumentException("Tool '{$toolName}' not found");

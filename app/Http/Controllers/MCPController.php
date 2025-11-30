@@ -32,7 +32,6 @@ class MCPController extends Controller
             'tool_name' => 'required|string',
             'args' => 'required|array'
         ]);
-
         try {
             $result = $this->mcpService->executeTool($request->tool_name, $request->args, $request);
 
