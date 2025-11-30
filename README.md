@@ -1,66 +1,252 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# MCP AI Chat Server
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel-based AI-powered chat interface for business management operations using natural language processing and tool calling.
 
-## About Laravel
+## 🎯 Overview
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+The MCP AI Chat Server enables users to interact with business data through natural language conversations. It leverages OpenAI's function calling capabilities to:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Analyze user intent from natural language input
+- Extract parameters automatically
+- Execute appropriate business operations via MCP tools
+- Return human-friendly responses
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## ✨ Features
 
-## Learning Laravel
+- **Natural Language Processing**: Understands Indonesian and English business queries
+- **AI-Powered Tool Calling**: Uses OpenAI GPT models for intelligent function selection
+- **Rule-Based Fallback**: Graceful degradation when AI services are unavailable
+- **Real-time Chat Interface**: Web-based chat UI with session management
+- **Comprehensive Logging**: Tracks all interactions and tool executions
+- **RESTful API**: Programmatic access to chat functionality
+- **Multi-Provider Support**: OpenAI and OpenRouter integration
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 🛠️ Available Tools
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `create_customer` | Create new customer records | name, email, phone |
+| `get_user` | Retrieve user by email | email |
+| `search_tasks` | Find tasks by status/user | status, assigned_to |
+| `update_task_status` | Change task status | task_id, status |
+| `get_overdue_customers` | Find inactive customers | days |
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 🚀 Quick Start
 
-## Laravel Sponsors
+### Prerequisites
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- PHP 8.1+
+- Composer
+- Node.js & npm (for frontend assets)
+- Database (MySQL/PostgreSQL/SQLite)
 
-### Premium Partners
+### Installation
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+1. **Clone and install dependencies:**
+   ```bash
+   git clone <repository-url>
+   cd mcp-server
+   composer install
+   npm install
+   ```
 
-## Contributing
+2. **Environment setup:**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+3. **Configure environment variables:**
+   ```env
+   # Database
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=mcp_chat
+   DB_USERNAME=your_username
+   DB_PASSWORD=your_password
 
-## Code of Conduct
+   # AI Providers
+   AI_PROVIDER=openai  # or 'openrouter'
+   OPENAI_API_KEY=your-openai-api-key
+   OPENROUTER_API_KEY=your-openrouter-api-key
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+   # MCP Authentication
+   MCP_VALID_KEYS=your-secret-key-here
+   ```
 
-## Security Vulnerabilities
+4. **Database setup:**
+   ```bash
+   php artisan migrate
+   php artisan db:seed  # Optional: seed sample data
+   ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+5. **Build assets:**
+   ```bash
+   npm run build
+   ```
 
-## License
+6. **Start the server:**
+   ```bash
+   php artisan serve
+   ```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+7. **Access the application:**
+   - Chat Interface: http://localhost:8000/chat
+   - API Documentation: http://localhost:8000/api/documentation
+
+## 💬 Usage Examples
+
+### Web Interface
+
+Visit `/chat` to use the interactive chat interface with example message buttons.
+
+### API Usage
+
+#### Send Chat Message
+```bash
+curl -X POST "http://localhost:8000/api/mcp/chat" \
+  -H "Content-Type: application/json" \
+  -H "X-MCP-Key: your-mcp-key" \
+  -d '{
+    "message": "Buatkan customer baru dengan nama John Doe, email john@example.com",
+    "session_id": "optional-session-id"
+  }'
+```
+
+#### Response
+```json
+{
+  "reply": "Customer 'John Doe' berhasil dibuat dengan ID 1.",
+  "executed_tool": "create_customer",
+  "arguments": {
+    "name": "John Doe",
+    "email": "john@example.com"
+  },
+  "result": {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john@example.com"
+  },
+  "status": "success"
+}
+```
+
+### Example Conversations
+
+**Creating a customer:**
+```
+User: Buatkan user baru dengan nama Andi, email andi@gmail.com
+AI: Customer 'Andi' berhasil dibuat dengan ID 5.
+```
+
+**Updating task status:**
+```
+User: Update status task nomor 1 menjadi completed
+AI: Status task ID 1 berhasil diubah menjadi 'completed'.
+```
+
+**Finding overdue customers:**
+```
+User: Tampilkan customer yang belum dihubungi lebih dari 30 hari
+AI: Ditemukan 3 customer yang belum dihubungi lebih dari 30 hari.
+```
+
+## 📡 API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/mcp/chat` | Send chat message |
+| GET | `/api/mcp/chat/history` | Get conversation history |
+| DELETE | `/api/mcp/chat/history` | Clear conversation history |
+
+### Authentication
+
+All API endpoints require the `X-MCP-Key` header with a valid key from `MCP_VALID_KEYS`.
+
+## 🔧 Configuration
+
+### AI Providers
+
+Choose between OpenAI and OpenRouter by setting `AI_PROVIDER`:
+
+- **OpenAI**: More reliable, requires API key
+- **OpenRouter**: Alternative provider, supports multiple models
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `AI_PROVIDER` | AI service provider | `openai` |
+| `OPENAI_API_KEY` | OpenAI API key | - |
+| `OPENROUTER_API_KEY` | OpenRouter API key | - |
+| `MCP_VALID_KEYS` | Comma-separated API keys | - |
+| `DB_CONNECTION` | Database connection | `mysql` |
+
+## 🏗️ Architecture
+
+### Core Components
+
+- **AgentService**: Main AI processing logic
+- **ToolRegistry**: Manages available MCP tools
+- **MCP Tools**: Individual business operation handlers
+- **ChatController**: Web interface and API endpoints
+- **Logging**: Comprehensive interaction tracking
+
+### Data Flow
+
+1. User sends message via API or web interface
+2. AgentService analyzes intent using AI or rule-based logic
+3. Appropriate tool is selected and executed
+4. Results are formatted into human-readable response
+5. Interaction is logged for analytics
+
+## 🔒 Security
+
+- API key authentication for all endpoints
+- Input validation and sanitization
+- Rate limiting on chat endpoints
+- Comprehensive error handling
+- No sensitive data exposure in responses
+
+## 📊 Monitoring
+
+All interactions are logged in the `mcp_command_logs` table including:
+- User messages and AI responses
+- Executed tools and parameters
+- Success/failure status
+- Session tracking
+- IP addresses and metadata
+
+## 🧪 Testing
+
+Run the test suite:
+```bash
+php artisan test
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🆘 Support
+
+For issues and questions:
+- Check the logs in `storage/logs/laravel.log`
+- Review `mcp_command_logs` table for interaction details
+- Ensure API keys are properly configured
+
+## 📚 Additional Resources
+
+- [Laravel Documentation](https://laravel.com/docs)
+- [OpenAI Function Calling](https://platform.openai.com/docs/guides/function-calling)
+- [OpenRouter API](https://openrouter.ai/docs)</content>
+<filePath>README.md
