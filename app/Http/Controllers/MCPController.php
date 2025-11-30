@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\MCPService;
+use App\MCP\Tools\ToolRegistry;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -13,11 +14,14 @@ class MCPController extends Controller
     public function __construct(MCPService $mcpService)
     {
         $this->mcpService = $mcpService;
+        ToolRegistry::autoDiscover();
     }
 
     public function getTools(): JsonResponse
     {
-        $tools = $this->mcpService->getTools();
+        $tools = array_map(function($tool) {
+            return $tool->toArray();
+        }, ToolRegistry::getAllTools());
 
         return response()->json([
             'success' => true,
@@ -32,6 +36,7 @@ class MCPController extends Controller
             'tool_name' => 'required|string',
             'args' => 'required|array'
         ]);
+
         try {
             $result = $this->mcpService->executeTool($request->tool_name, $request->args, $request);
 
@@ -46,6 +51,57 @@ class MCPController extends Controller
                 'error' => $e->getMessage()
             ], 400);
         }
+    }
+
+    public function agentCall(Request $request): JsonResponse
+    {
+        $request->validate([
+            'tool' => 'required|string',
+            'args' => 'sometimes|array'
+        ]);
+
+        $tool = ToolRegistry::getTool($request->tool);
+
+        if (!$tool) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Tool not found'
+            ], 404);
+        }
+
+        try {
+            $result = $tool->execute($request->args ?? []);
+
+            // Log the request
+            \App\Models\MCPLog::create([
+                'tool_name' => $request->tool,
+                'args' => json_encode($request->args ?? []),
+                'response' => json_encode($result),
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'result' => $result
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'error' => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    public function getToolSchemas(): JsonResponse
+    {
+        $schemas = ToolRegistry::getToolSchemas();
+
+        return response()->json([
+            'success' => true,
+            'data' => $schemas,
+            'message' => 'Tool schemas retrieved successfully'
+        ]);
     }
 
     public function getResources(): JsonResponse
