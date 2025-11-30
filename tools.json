@@ -1,0 +1,131 @@
+{
+  "tools": [
+    {
+      "name": "get_user",
+      "description": "Retrieve user information by email",
+      "args": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "User email address"
+          }
+        },
+        "required": ["email"]
+      }
+    },
+    {
+      "name": "update_task_status",
+      "description": "Update the status of a task",
+      "args": {
+        "type": "object",
+        "properties": {
+          "task_id": {
+            "type": "integer",
+            "description": "Task ID"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "in_progress", "completed"],
+            "description": "New status"
+          }
+        },
+        "required": ["task_id", "status"]
+      }
+    },
+    {
+      "name": "search_customer",
+      "description": "Search customers by keyword",
+      "args": {
+        "type": "object",
+        "properties": {
+          "keyword": {
+            "type": "string",
+            "description": "Search keyword"
+          }
+        },
+        "required": ["keyword"]
+      }
+    },
+    {
+      "name": "get_pending_tasks",
+      "description": "Get pending tasks with optional limit",
+      "args": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "Maximum number of tasks to return",
+            "default": 10
+          }
+        }
+      }
+    }
+  ],
+  "resources": [
+    {
+      "name": "users",
+      "description": "User data schema",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    {
+      "name": "tasks",
+      "description": "Task data schema",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "in_progress", "completed"]
+          },
+          "user_id": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    {
+      "name": "customers",
+      "description": "Customer data schema",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ]
+}
