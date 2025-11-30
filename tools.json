@@ -1,131 +1,127 @@
-{
-  "tools": [
+[
     {
-      "name": "get_user",
-      "description": "Retrieve user information by email",
-      "args": {
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string",
-            "description": "User email address"
-          }
-        },
-        "required": ["email"]
-      }
-    },
-    {
-      "name": "update_task_status",
-      "description": "Update the status of a task",
-      "args": {
-        "type": "object",
-        "properties": {
-          "task_id": {
-            "type": "integer",
-            "description": "Task ID"
-          },
-          "status": {
-            "type": "string",
-            "enum": ["pending", "in_progress", "completed"],
-            "description": "New status"
-          }
-        },
-        "required": ["task_id", "status"]
-      }
-    },
-    {
-      "name": "search_customer",
-      "description": "Search customers by keyword",
-      "args": {
-        "type": "object",
-        "properties": {
-          "keyword": {
-            "type": "string",
-            "description": "Search keyword"
-          }
-        },
-        "required": ["keyword"]
-      }
-    },
-    {
-      "name": "get_pending_tasks",
-      "description": "Get pending tasks with optional limit",
-      "args": {
-        "type": "object",
-        "properties": {
-          "limit": {
-            "type": "integer",
-            "description": "Maximum number of tasks to return",
-            "default": 10
-          }
+        "type": "function",
+        "function": {
+            "name": "create_customer",
+            "description": "Create a new customer",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Customer name",
+                        "required": true
+                    },
+                    "email": {
+                        "type": "string",
+                        "description": "Customer email",
+                        "required": true
+                    },
+                    "phone": {
+                        "type": "string",
+                        "description": "Customer phone number"
+                    }
+                },
+                "required": [
+                    "name",
+                    "email"
+                ]
+            }
         }
-      }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_overdue_customers",
+            "description": "Get customers who haven't been contacted in the specified number of days",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "days": {
+                        "type": "integer",
+                        "description": "Number of days since last contact",
+                        "default": 30
+                    }
+                },
+                "required": []
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_user",
+            "description": "Retrieve user information by email address",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "email": {
+                        "type": "string",
+                        "description": "User email address",
+                        "required": true
+                    }
+                },
+                "required": [
+                    "email"
+                ]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "search_tasks",
+            "description": "Search tasks by status and\/or assigned user",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "in_progress",
+                            "completed"
+                        ],
+                        "description": "Task status filter"
+                    },
+                    "assigned_to": {
+                        "type": "integer",
+                        "description": "User ID the task is assigned to"
+                    }
+                },
+                "required": []
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "update_task_status",
+            "description": "Update the status of a task",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "task_id": {
+                        "type": "integer",
+                        "description": "Task ID",
+                        "required": true
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": [
+                            "pending",
+                            "in_progress",
+                            "completed"
+                        ],
+                        "description": "New status",
+                        "required": true
+                    }
+                },
+                "required": [
+                    "task_id",
+                    "status"
+                ]
+            }
+        }
     }
-  ],
-  "resources": [
-    {
-      "name": "users",
-      "description": "User data schema",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer"
-          },
-          "name": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          }
-        }
-      }
-    },
-    {
-      "name": "tasks",
-      "description": "Task data schema",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer"
-          },
-          "title": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string",
-            "enum": ["pending", "in_progress", "completed"]
-          },
-          "user_id": {
-            "type": "integer"
-          }
-        }
-      }
-    },
-    {
-      "name": "customers",
-      "description": "Customer data schema",
-      "schema": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer"
-          },
-          "name": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "phone": {
-            "type": "string"
-          }
-        }
-      }
-    }
-  ]
-}
+]

@@ -1,89 +1,76 @@
-# MCP AI Chat Server
+# 🤖 MCP AI Chat Server
 
-A Laravel-based AI-powered chat interface for business management operations using natural language processing and tool calling.
+<p align="center">
+A Laravel-based AI-powered natural language interface for business operations using OpenAI's function calling capabilities.
+</p>
 
-## 🎯 Overview
+<p align="center">
+<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Laravel Version"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+</p>
 
-The MCP AI Chat Server enables users to interact with business data through natural language conversations. It leverages OpenAI's function calling capabilities to:
+## 🎯 About This Project
 
-- Analyze user intent from natural language input
-- Extract parameters automatically
-- Execute appropriate business operations via MCP tools
-- Return human-friendly responses
+This MCP (Model Context Protocol) AI Chat Server provides a natural language interface for business operations. Users can interact with business data using conversational language, and the AI automatically:
 
-## ✨ Features
+- Analyzes user intent from natural language
+- Extracts relevant parameters
+- Selects appropriate business tools
+- Executes actions via RESTful APIs
+- Returns human-friendly responses
 
-- **Natural Language Processing**: Understands Indonesian and English business queries
-- **AI-Powered Tool Calling**: Uses OpenAI GPT models for intelligent function selection
-- **Rule-Based Fallback**: Graceful degradation when AI services are unavailable
-- **Real-time Chat Interface**: Web-based chat UI with session management
-- **Comprehensive Logging**: Tracks all interactions and tool executions
-- **RESTful API**: Programmatic access to chat functionality
-- **Multi-Provider Support**: OpenAI and OpenRouter integration
-
-## 🛠️ Available Tools
-
-| Tool | Description | Parameters |
-|------|-------------|------------|
-| `create_customer` | Create new customer records | name, email, phone |
-| `get_user` | Retrieve user by email | email |
-| `search_tasks` | Find tasks by status/user | status, assigned_to |
-| `update_task_status` | Change task status | task_id, status |
-| `get_overdue_customers` | Find inactive customers | days |
+Built with Laravel and powered by OpenAI's function calling, this system bridges the gap between human language and structured business operations.
 
 ## 🚀 Quick Start
 
 ### Prerequisites
-
 - PHP 8.1+
 - Composer
 - Node.js & npm (for frontend assets)
+- OpenAI API key
 - Database (MySQL/PostgreSQL/SQLite)
 
 ### Installation
 
-1. **Clone and install dependencies:**
+1. **Clone the repository:**
    ```bash
    git clone <repository-url>
    cd mcp-server
+   ```
+
+2. **Install dependencies:**
+   ```bash
    composer install
    npm install
    ```
 
-2. **Environment setup:**
+3. **Environment setup:**
    ```bash
    cp .env.example .env
    php artisan key:generate
    ```
 
-3. **Configure environment variables:**
+4. **Configure environment variables:**
    ```env
    # Database
    DB_CONNECTION=mysql
    DB_HOST=127.0.0.1
    DB_PORT=3306
-   DB_DATABASE=mcp_chat
+   DB_DATABASE=mcp_server
    DB_USERNAME=your_username
    DB_PASSWORD=your_password
 
-   # AI Providers
-   AI_PROVIDER=openai  # or 'openrouter'
+   # OpenAI
    OPENAI_API_KEY=your-openai-api-key
-   OPENROUTER_API_KEY=your-openrouter-api-key
 
-   # MCP Authentication
-   MCP_VALID_KEYS=your-secret-key-here
+   # MCP Security
+   MCP_VALID_KEYS=your-mcp-api-key
    ```
 
-4. **Database setup:**
+5. **Run migrations:**
    ```bash
    php artisan migrate
-   php artisan db:seed  # Optional: seed sample data
-   ```
-
-5. **Build assets:**
-   ```bash
-   npm run build
    ```
 
 6. **Start the server:**
@@ -91,162 +78,102 @@ The MCP AI Chat Server enables users to interact with business data through natu
    php artisan serve
    ```
 
-7. **Access the application:**
-   - Chat Interface: http://localhost:8000/chat
-   - API Documentation: http://localhost:8000/api/documentation
+### Access the Application
 
-## 💬 Usage Examples
+- **Chat Interface:** `http://localhost:8000/chat`
+- **Documentation:** `http://localhost:8000/documentation`
+- **API Documentation:** See `/documentation` for detailed API specs
 
-### Web Interface
+## 🛠️ Available Tools
 
-Visit `/chat` to use the interactive chat interface with example message buttons.
+The AI can execute the following business operations:
 
-### API Usage
+| Tool | Description | Parameters |
+|------|-------------|------------|
+| `create_customer` | Create a new customer | name, email, phone |
+| `get_user` | Retrieve user by email | email |
+| `update_task_status` | Update task status | task_id, status |
+| `search_tasks` | Search tasks by criteria | status, assigned_to |
+| `get_overdue_customers` | Find customers not contacted | days (default: 30) |
 
-#### Send Chat Message
+## 🔒 Security Features
+
+- **API Key Authentication** - All endpoints require X-MCP-Key header
+- **Input Validation** - Messages limited to 1000 characters
+- **Rate Limiting** - Built-in Laravel rate limiting
+- **Comprehensive Logging** - All interactions logged in database
+- **Error Handling** - Graceful responses without exposing internals
+
+## 📊 Example Usage
+
 ```bash
+# Create a new customer
 curl -X POST "http://localhost:8000/api/mcp/chat" \
   -H "Content-Type: application/json" \
-  -H "X-MCP-Key: your-mcp-key" \
-  -d '{
-    "message": "Buatkan customer baru dengan nama John Doe, email john@example.com",
-    "session_id": "optional-session-id"
-  }'
+  -H "X-MCP-Key: your-key" \
+  -d '{"message": "Buatkan customer baru nama John, email john@example.com"}'
+
+# Update task status
+curl -X POST "http://localhost:8000/api/mcp/chat" \
+  -H "Content-Type: application/json" \
+  -H "X-MCP-Key: your-key" \
+  -d '{"message": "Update status task 1 menjadi completed"}'
 ```
-
-#### Response
-```json
-{
-  "reply": "Customer 'John Doe' berhasil dibuat dengan ID 1.",
-  "executed_tool": "create_customer",
-  "arguments": {
-    "name": "John Doe",
-    "email": "john@example.com"
-  },
-  "result": {
-    "id": 1,
-    "name": "John Doe",
-    "email": "john@example.com"
-  },
-  "status": "success"
-}
-```
-
-### Example Conversations
-
-**Creating a customer:**
-```
-User: Buatkan user baru dengan nama Andi, email andi@gmail.com
-AI: Customer 'Andi' berhasil dibuat dengan ID 5.
-```
-
-**Updating task status:**
-```
-User: Update status task nomor 1 menjadi completed
-AI: Status task ID 1 berhasil diubah menjadi 'completed'.
-```
-
-**Finding overdue customers:**
-```
-User: Tampilkan customer yang belum dihubungi lebih dari 30 hari
-AI: Ditemukan 3 customer yang belum dihubungi lebih dari 30 hari.
-```
-
-## 📡 API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/api/mcp/chat` | Send chat message |
-| GET | `/api/mcp/chat/history` | Get conversation history |
-| DELETE | `/api/mcp/chat/history` | Clear conversation history |
-
-### Authentication
-
-All API endpoints require the `X-MCP-Key` header with a valid key from `MCP_VALID_KEYS`.
-
-## 🔧 Configuration
-
-### AI Providers
-
-Choose between OpenAI and OpenRouter by setting `AI_PROVIDER`:
-
-- **OpenAI**: More reliable, requires API key
-- **OpenRouter**: Alternative provider, supports multiple models
-
-### Environment Variables
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `AI_PROVIDER` | AI service provider | `openai` |
-| `OPENAI_API_KEY` | OpenAI API key | - |
-| `OPENROUTER_API_KEY` | OpenRouter API key | - |
-| `MCP_VALID_KEYS` | Comma-separated API keys | - |
-| `DB_CONNECTION` | Database connection | `mysql` |
 
 ## 🏗️ Architecture
 
-### Core Components
+### Backend (Laravel)
+- **Framework:** Laravel 10.x
+- **AI Integration:** OpenAI GPT with function calling
+- **Database:** Eloquent ORM with migrations
+- **API:** RESTful endpoints with JSON responses
+- **Authentication:** API key-based security
+- **Logging:** Comprehensive database logging
 
-- **AgentService**: Main AI processing logic
-- **ToolRegistry**: Manages available MCP tools
-- **MCP Tools**: Individual business operation handlers
-- **ChatController**: Web interface and API endpoints
-- **Logging**: Comprehensive interaction tracking
+### Frontend
+- **Styling:** Tailwind CSS
+- **JavaScript:** Vanilla JS with fetch API
+- **UI:** Responsive chat interface
+- **Real-time:** Typing indicators and live updates
 
-### Data Flow
+### AI Flow
+1. **Natural Language Processing** → Intent analysis
+2. **Parameter Extraction** → Structured data
+3. **Tool Selection** → Function calling
+4. **Execution** → Business logic
+5. **Response Generation** → Human-friendly output
 
-1. User sends message via API or web interface
-2. AgentService analyzes intent using AI or rule-based logic
-3. Appropriate tool is selected and executed
-4. Results are formatted into human-readable response
-5. Interaction is logged for analytics
+## 📝 API Reference
 
-## 🔒 Security
+### POST `/api/mcp/chat`
+Main chat endpoint for AI-powered business operations.
 
-- API key authentication for all endpoints
-- Input validation and sanitization
-- Rate limiting on chat endpoints
-- Comprehensive error handling
-- No sensitive data exposure in responses
+**Headers:**
+- `Content-Type: application/json`
+- `X-MCP-Key: your-api-key`
 
-## 📊 Monitoring
+**Request Body:**
+```json
+{
+  "message": "Create a new customer named John Doe",
+  "session_id": "optional-session-identifier"
+}
+```
 
-All interactions are logged in the `mcp_command_logs` table including:
-- User messages and AI responses
-- Executed tools and parameters
-- Success/failure status
-- Session tracking
-- IP addresses and metadata
-
-## 🧪 Testing
-
-Run the test suite:
-```bash
-php artisan test
+**Response:**
+```json
+{
+  "reply": "Customer 'John Doe' created successfully with ID 42",
+  "executed_tool": "create_customer",
+  "result": {"id": 42, "name": "John Doe"},
+  "session_id": "session-uuid"
+}
 ```
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+We welcome contributions! Please see our [documentation](/documentation) for detailed API specifications and development guidelines.
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🆘 Support
-
-For issues and questions:
-- Check the logs in `storage/logs/laravel.log`
-- Review `mcp_command_logs` table for interaction details
-- Ensure API keys are properly configured
-
-## 📚 Additional Resources
-
-- [Laravel Documentation](https://laravel.com/docs)
-- [OpenAI Function Calling](https://platform.openai.com/docs/guides/function-calling)
-- [OpenRouter API](https://openrouter.ai/docs)</content>
-<filePath>README.md
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
