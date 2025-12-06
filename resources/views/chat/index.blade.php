@@ -215,7 +215,7 @@
                 const metadata = data.executed_tool ?
                     `Tool: ${data.executed_tool}${data.result?.id ? ` | ID: ${data.result.id}` : ''}` :
                     '';
-
+                console.log(metadata);
                 addMessage(data.reply, false, metadata);
             } catch {
                 addMessage('An error occurred. Please try again.', false);

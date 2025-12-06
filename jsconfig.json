@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "paths": {
+            "@/*": ["./resources/js/*"]
+        },
+        "jsx": "react"
+    },
+    "exclude": ["node_modules", "public"]
+}
