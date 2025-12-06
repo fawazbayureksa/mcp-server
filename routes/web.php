@@ -22,7 +22,7 @@ Route::get('/', function () {
 });
 
 Route::get('/chat', function () {
-    return view('chat.index');
+    return Inertia::render('Chat');
 });
 
 Route::get('/documentation', function () {
