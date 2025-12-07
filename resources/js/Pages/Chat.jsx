@@ -20,7 +20,7 @@ export default function Chat({ SessionId }) {
     const messagesEndRef = useRef(null);
 
     const apiKey = import.meta.env.VITE_MCP_API_KEY;
-
+    console.log('CURRENT SESSION ID: ' + SessionId);
     useEffect(() => {
         if (sessionId) {
             initializeSession();
@@ -40,36 +40,43 @@ export default function Chat({ SessionId }) {
                 params: { session_id: sessionId, limit: 50 },
                 headers: { 'X-MCP-Key': apiKey }
             });
-            
-            console.log('Chat history response:', response.data);
-            
-            if (response.data.success && response.data.history && response.data.history.length > 0) {
-                // Clear default message and load history
-                const historyMessages = [];
+        
+            if (response.data.success && response.data.history) {
+                // Convert to array if it's an object
+                const historyArray = Array.isArray(response.data.history) 
+                    ? response.data.history 
+                    : Object.values(response.data.history);
                 
-                response.data.history.forEach((msg, index) => {
-                    // Add user message
-                    if (msg.user_message) {
-                        historyMessages.push({
-                            id: `user-${Date.now()}-${index}`,
-                            content: msg.user_message,
-                            isUser: true,
-                            metadata: null
-                        });
-                    }
+                console.log('History array:', historyArray);
+                
+                if (historyArray.length > 0) {
+                    const historyMessages = [];
                     
-                    // Add AI response
-                    if (msg.ai_response) {
-                        historyMessages.push({
-                            id: `ai-${Date.now()}-${index}`,
-                            content: msg.ai_response,
-                            isUser: false,
-                            metadata: null
-                        });
-                    }
-                });
-                
-                setMessages(historyMessages);
+                    historyArray.forEach((msg, index) => {
+                        // Add user message
+                        if (msg.user_message) {
+                            historyMessages.push({
+                                id: `user-${Date.now()}-${index}`,
+                                content: msg.user_message,
+                                isUser: true,
+                                metadata: null
+                            });
+                        }
+                        
+                        // Add AI response
+                        if (msg.ai_response) {
+                            historyMessages.push({
+                                id: `ai-${Date.now()}-${index}`,
+                                content: msg.ai_response,
+                                isUser: false,
+                                metadata: null
+                            });
+                        }
+                    });
+                    
+                    console.log('Loaded history messages:', historyMessages);
+                    setMessages(historyMessages);
+                }
             }
         } catch (error) {
             console.error('Failed to load chat history:', error);

@@ -20,8 +20,11 @@ class ChatController extends Controller
     public function index(Request $request)
     {
         $param = $request->all();
+
+        $sessionId = Str::uuid()->toString();
+
         return Inertia::render('Chat', [
-            'SessionId' => $param['session_id'],
+            'SessionId' => $param['session_id'] ?? $sessionId,
         ]);
     }
 
@@ -65,6 +68,7 @@ class ChatController extends Controller
             'session_id' => 'required|string',
             'limit' => 'nullable|integer|min:1|max:50',
         ]);
+
         $history = $this->agentService->getConversationHistory(
             $request->session_id,
             $request->limit ?? 20
