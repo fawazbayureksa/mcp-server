@@ -19,7 +19,7 @@ export default function Chat({ SessionId }) {
     const [sessionId, setSessionId] = useState(SessionId || null);
     const messagesEndRef = useRef(null);
 
-    const apiKey = '112233';
+    const apiKey = import.meta.env.VITE_MCP_API_KEY;
 
     useEffect(() => {
         if (sessionId) {

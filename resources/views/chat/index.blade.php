@@ -130,7 +130,7 @@
 
     <script>
         let sessionId = null;
-        const apiKey = '112233';
+        const apiKey = null;
 
         async function initializeSession() {
             try {

@@ -17,8 +17,9 @@ export default function SideBar({ agents = [] }) {
 
     const fetchSessions = async () => {
         try {
+            let apiKey = import.meta.env.VITE_MCP_API_KEY;
             const response = await axios.get('/api/mcp/sessions', {
-                headers: { 'X-MCP-Key': '112233' }
+                headers: { 'X-MCP-Key': apiKey }
             });
             console.log('Sessions response:', response.data);
             // API returns data wrapped in a 'data' property

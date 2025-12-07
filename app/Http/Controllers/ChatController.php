@@ -21,7 +21,7 @@ class ChatController extends Controller
     {
         $param = $request->all();
         return Inertia::render('Chat', [
-            'SessionId' => $param['session_id'] ?? 'new',
+            'SessionId' => $param['session_id'],
         ]);
     }
 
