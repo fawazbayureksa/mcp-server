@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -21,9 +22,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/chat', function () {
-    return Inertia::render('Chat');
-});
+Route::get('/chat', [ChatController::class, 'index'])->name('chat');
 
 Route::get('/documentation', function () {
     return view('documentation');

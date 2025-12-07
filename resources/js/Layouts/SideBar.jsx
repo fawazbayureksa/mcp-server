@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Accordion, AccordionItem, Listbox, ListboxItem, Button, Avatar, Badge } from '@heroui/react';
 import { Link, router } from '@inertiajs/react';
 import axios from 'axios';
-import { MessageCircle, MessageCircleDashed, MessageSquarePlus, MessagesSquare } from 'lucide-react';
+import { MessageCircle, MessageCircleDashed, MessageSquare, MessageSquarePlus, MessagesSquare } from 'lucide-react';
 
 export default function SideBar({ agents = [] }) {
     const [sessions, setSessions] = useState([]);
@@ -20,7 +20,9 @@ export default function SideBar({ agents = [] }) {
             const response = await axios.get('/api/mcp/sessions', {
                 headers: { 'X-MCP-Key': '112233' }
             });
-            setSessions(response.data);
+            console.log('Sessions response:', response.data);
+            // API returns data wrapped in a 'data' property
+            setSessions(response.data.data || []);
         } catch (error) {
             console.error('Failed to fetch sessions:', error);
             // Fallback to empty or mock data
@@ -34,6 +36,7 @@ export default function SideBar({ agents = [] }) {
         // Create new session and navigate
         router.visit('/chat');
     };
+
 
     return (
         <div className="w-64 dark:bg-white bg-gray-800 border-r border-gray-200 dark:border-gray-700 h-full overflow-y-auto">
@@ -50,12 +53,12 @@ export default function SideBar({ agents = [] }) {
                                         key={session.id}
                                         className="hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
                                         startContent={
-                                           <MessageCircle className="w-5 h-5 text-gray-600 dark:text-gray-300 mr-2" />
+                                           <MessageSquare className="w-5 h-5 text-gray-300 dark:text-gray-300 mr-2" />
                                         }
                                     >
                                         <Link href={`/chat?session_id=${session.id}`} className="block w-full">
                                             <div className="flex flex-col">
-                                                <span className="font-medium text-gray-900 dark:text-white">
+                                                <span className="font-medium text-gray-100 dark:text-white">
                                                     {session.name || `Session ${session.id}`}
                                                 </span>
                                                 <span className="text-sm text-gray-500 dark:text-gray-400">

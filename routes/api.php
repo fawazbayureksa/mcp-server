@@ -29,4 +29,5 @@ Route::middleware('mcp.auth')->group(function () {
     Route::post('/mcp/chat', [App\Http\Controllers\ChatController::class, 'chat']);
     Route::get('/mcp/chat/history', [App\Http\Controllers\ChatController::class, 'getHistory']);
     Route::delete('/mcp/chat/history', [App\Http\Controllers\ChatController::class, 'clearHistory']);
+    Route::get('/mcp/sessions', [App\Http\Controllers\MCPController::class, 'getSessions']);
 });

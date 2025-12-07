@@ -3,8 +3,9 @@ import axios from 'axios';
 import { Button, Input } from '@heroui/react';
 import { Send, Sparkles } from 'lucide-react';
 import SideBar from '../Layouts/SideBar';
+import { Head } from '@inertiajs/react';
 
-export default function Chat() {
+export default function Chat({ SessionId }) {
     const [messages, setMessages] = useState([
         {
             id: 1,
@@ -15,29 +16,64 @@ export default function Chat() {
     ]);
     const [inputValue, setInputValue] = useState('');
     const [isTyping, setIsTyping] = useState(false);
-    const [sessionId, setSessionId] = useState(null);
+    const [sessionId, setSessionId] = useState(SessionId || null);
     const messagesEndRef = useRef(null);
 
     const apiKey = '112233';
 
     useEffect(() => {
-        initializeSession();
+        if (sessionId) {
+            initializeSession();
+        } else {
+            setSessionId(generateSessionId());
+        }
     }, []);
 
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
 
+
     const initializeSession = async () => {
         try {
             const response = await axios.get('/api/mcp/chat/history', {
-                params: { session_id: 'new', limit: 1 },
+                params: { session_id: sessionId, limit: 50 },
                 headers: { 'X-MCP-Key': apiKey }
             });
-            const newSessionId = response.data.session_id || generateSessionId();
-            setSessionId(newSessionId);
-        } catch {
-            setSessionId(generateSessionId());
+            
+            console.log('Chat history response:', response.data);
+            
+            if (response.data.success && response.data.history && response.data.history.length > 0) {
+                // Clear default message and load history
+                const historyMessages = [];
+                
+                response.data.history.forEach((msg, index) => {
+                    // Add user message
+                    if (msg.user_message) {
+                        historyMessages.push({
+                            id: `user-${Date.now()}-${index}`,
+                            content: msg.user_message,
+                            isUser: true,
+                            metadata: null
+                        });
+                    }
+                    
+                    // Add AI response
+                    if (msg.ai_response) {
+                        historyMessages.push({
+                            id: `ai-${Date.now()}-${index}`,
+                            content: msg.ai_response,
+                            isUser: false,
+                            metadata: null
+                        });
+                    }
+                });
+                
+                setMessages(historyMessages);
+            }
+        } catch (error) {
+            console.error('Failed to load chat history:', error);
+            // Keep default welcome message
         }
     };
 
@@ -105,6 +141,7 @@ export default function Chat() {
 
     return (
         <div className="flex h-screen bg-gradient-to-br from-[#1a1a2e] via-[#16213e] to-[#0f1419] text-white">
+            <Head title="Chat" />
             <SideBar />
             <div className="flex-1 flex flex-col relative">
                 {/* Animated background effect */}
@@ -189,7 +226,7 @@ export default function Chat() {
 
                         <form onSubmit={handleSubmit} className="relative">
                             <div className="relative group">
-                                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-2xl opacity-20 group-hover:opacity-30 blur transition-opacity"></div>
+                                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 via-purple-300 to-pink-300 rounded-2xl opacity-20 group-hover:opacity-30 blur transition-opacity"></div>
                                 <div className="relative flex items-center gap-3 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-2 shadow-2xl">
                                     <input
                                         type="text"
@@ -203,7 +240,7 @@ export default function Chat() {
                                     <button
                                         type="submit"
                                         disabled={isTyping || !inputValue.trim()}
-                                        className="relative group/btn px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white rounded-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-blue-500/50 disabled:hover:shadow-none flex items-center gap-2"
+                                        className="relative group/btn px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-900 hover:from-blue-500 hover:to-purple-500 text-white rounded-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 shadow-lg hover:shadow-blue-500/50 disabled:hover:shadow-none flex items-center gap-2"
                                     >
                                         <span className="relative z-10">Send</span>
                                         <Send className="w-4 h-4 relative z-10 group-hover/btn:translate-x-0.5 transition-transform" />

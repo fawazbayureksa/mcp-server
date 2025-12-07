@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Services\MCPService;
 use App\MCP\Tools\ToolRegistry;
+use App\Models\MCPCommandLog;
+use App\Models\MCPLog;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class MCPController extends Controller
 {
@@ -19,7 +22,7 @@ class MCPController extends Controller
 
     public function getTools(): JsonResponse
     {
-        $tools = array_map(function($tool) {
+        $tools = array_map(function ($tool) {
             return $tool->toArray();
         }, ToolRegistry::getAllTools());
 
@@ -73,7 +76,7 @@ class MCPController extends Controller
             $result = $tool->execute($request->args ?? []);
 
             // Log the request
-            \App\Models\MCPLog::create([
+            MCPLog::create([
                 'tool_name' => $request->tool,
                 'args' => json_encode($request->args ?? []),
                 'response' => json_encode($result),
@@ -112,6 +115,27 @@ class MCPController extends Controller
             'success' => true,
             'data' => $resources,
             'message' => 'Resources retrieved successfully'
+        ]);
+    }
+
+    public function getSessions(): JsonResponse
+    {
+        $sessions = MCPCommandLog::select('session_id', DB::raw('MAX(created_at) as created_at'))
+            ->groupBy('session_id')
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($session) {
+                return [
+                    'id' => $session->session_id,
+                    'name' => 'Session ' . substr($session->session_id, -8), // Last 8 chars for name
+                    'created_at' => $session->created_at->toISOString(),
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'data' => $sessions,
+            'message' => 'Sessions retrieved successfully'
         ]);
     }
 }
