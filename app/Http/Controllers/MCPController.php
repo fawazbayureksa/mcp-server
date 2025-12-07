@@ -120,14 +120,20 @@ class MCPController extends Controller
 
     public function getSessions(): JsonResponse
     {
-        $sessions = MCPCommandLog::select('session_id', DB::raw('MAX(created_at) as created_at'))
-            ->groupBy('session_id')
+        $sessions = MCPCommandLog::select('session_id', 'user_message', 'created_at')
+            ->whereIn('id', function ($query) {
+                $query->selectRaw('MIN(id)')
+                    ->from('mcp_command_logs')
+                    ->groupBy('session_id');
+            })
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($session) {
+                $message = $session->user_message;
+                $truncatedMessage = strlen($message) > 20 ? substr($message, 0, 20) . '...' : $message;
                 return [
                     'id' => $session->session_id,
-                    'name' => 'Session ' . substr($session->session_id, -8), // Last 8 chars for name
+                    'name' => $truncatedMessage,
                     'created_at' => $session->created_at->toISOString(),
                 ];
             });

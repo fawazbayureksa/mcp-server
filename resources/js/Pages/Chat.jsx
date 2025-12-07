@@ -207,7 +207,7 @@ export default function Chat({ SessionId }) {
                                 </div>
                             </div>
                         )}
-                        <div ref={messagesEndRef} />
+                        <div  ref={messagesEndRef} />
                     </div>
                 </div>
 
