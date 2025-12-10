@@ -6,6 +6,7 @@ use App\Services\AgentService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
 
 class ChatController extends Controller
 {
@@ -14,6 +15,17 @@ class ChatController extends Controller
     public function __construct(AgentService $agentService)
     {
         $this->agentService = $agentService;
+    }
+
+    public function index(Request $request)
+    {
+        $param = $request->all();
+
+        $sessionId = Str::uuid()->toString();
+
+        return Inertia::render('Chat', [
+            'SessionId' => $param['session_id'] ?? $sessionId,
+        ]);
     }
 
     public function chat(Request $request): JsonResponse
@@ -25,7 +37,6 @@ class ChatController extends Controller
 
         // Generate session ID if not provided
         $sessionId = $request->session_id ?? Str::uuid()->toString();
-
         try {
             // Get conversation context (last 5 messages)
             $context = $this->agentService->getConversationHistory($sessionId, 5);
@@ -62,7 +73,6 @@ class ChatController extends Controller
             $request->session_id,
             $request->limit ?? 20
         );
-
         return response()->json([
             'success' => true,
             'history' => $history,

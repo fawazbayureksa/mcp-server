@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,12 +16,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return Inertia::render('Welcome', [
+        'laravelVersion' => app()->version(),
+        'phpVersion' => PHP_VERSION,
+    ]);
 });
 
-Route::get('/chat', function () {
-    return view('chat.index');
-});
+Route::get('/chat', [ChatController::class, 'index'])->name('chat');
 
 Route::get('/documentation', function () {
     return view('documentation');
